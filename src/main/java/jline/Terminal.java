@@ -96,7 +96,16 @@ public abstract class Terminal implements ConsoleOperations {
      *  the console.
      */
     public int readCharacter(final InputStream in) throws IOException {
-        return in.read();
+        while (true) {
+            try {
+                return in.read();
+            } catch (IOException e) {
+                // if the text of the message indicates that the failure
+                // was due to the user suspending the shell, continue
+                if (!"Interrupted system call".equals(e.getMessage()))
+                    throw e;
+            }
+        }
     }
 
     /**
